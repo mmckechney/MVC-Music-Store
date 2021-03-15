@@ -13,6 +13,11 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
     branches: [ post-containerisation ]
+    
+env:
+  imageRepository: 'mvmusicstoreweb'
+  dockerfilePath: './MvcMusicStore-Completed/MvcMusicStore'
+  tag: '${{ github.run_id  }}'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -25,16 +30,14 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-      
-      - name: Azure Container Registry Login      
-        uses: azure/docker-login@v1
+    
+      - name: Build and push an image to container registry
+        uses: docker/build-push-action@v1
         with:
-          login-server: ${{ secrets.ACR_INSTANCE }}
-          username: ${{ secrets.ACR_USER }}
-          password: ${{ secrets.ACR_SECRET }}
-   
-      # Build and push the image to Container Registry
-      - name: Build and Push container to ACR
-        run: |
-          docker build --file=MvcMusicStore-Completed/MvcMusicStore/Dockerfile -t ${{ secrets.ACR_INSTANCE }}/${{ secrets.IMAGE_NAME }}:${{ github.sha }} .
-          docker push ${{ secrets.ACR_INSTANCE }}/${{ secrets.IMAGE_NAME }}:${{ github.sha }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+	        registry: ${{ secrets.ACR_INSTANCE }}
+          path: ${{ env.dockerfilePath }}
+          dockerfile: '${{ env.dockerfilePath }}/Dockerfile'
+          repository: ${{ env.imageRepository }}
+          tags: ${{ env.tag }},latest
