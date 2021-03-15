@@ -19,6 +19,7 @@ Thumbs.db
 *.cache
 *.ilk
 *.log
+*.env
 [Bb]in
 [Dd]ebug*/
 *.lib
@@ -31,3 +32,4 @@ src/Diffusyn.DiffusynServer/Diffusyn.DiffusynServer/SourceServer/
 src/Diffusyn.DiffusynServer/Diffusyn.DiffusynServer/BuildServer/
 src/Diffusyn.DiffusynServer/Diffusyn.DiffusynServer/WebServer/
 src/Diffusyn.DiffusynServer/Diffusyn.DiffusynServer/logs/
+*.vs

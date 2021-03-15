@@ -75,11 +75,12 @@ namespace MvcMusicStore.Controllers
         // POST: /StoreManager/Edit/5
 
         [HttpPost]
-        public ActionResult Edit(Album album)
+        public ActionResult Edit(int id, Album album)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(album).State = EntityState.Modified;
+                album.AlbumId = id;
+                db.Entry(album).State = System.Data.Entity.EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }

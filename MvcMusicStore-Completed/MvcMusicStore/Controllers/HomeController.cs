@@ -25,6 +25,8 @@ namespace MvcMusicStore.Controllers
             // Group the order details by album and return
             // the albums with the highest count
 
+            var bob = storeDB.Database.Connection.ConnectionString;
+
             return storeDB.Albums
                 .OrderByDescending(a => a.OrderDetails.Count())
                 .Take(count)
