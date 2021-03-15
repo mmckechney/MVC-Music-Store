@@ -1,0 +1,40 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Build Windows Container Image
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ post-containerisation ]
+  pull_request:
+    branches: [ post-containerisation ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    branches: [ post-containerisation ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build-and-deploy-to-azure:
+    # The type of runner that the job will run on
+    runs-on: windows-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      
+      - name: Azure Container Registry Login      
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ secrets.ACR_INSTANCE }}
+          username: ${{ secrets.ACR_USER }}
+          password: ${{ secrets.ACR_SECRET }}
+   
+      # Build and push the image to Container Registry
+      - name: Build and Push container to ACR
+        run: |
+          docker build --file=MvcMusicStore-Completed/MvcMusicStore/Dockerfile -t ${{ secrets.ACR_INSTANCE }}/${{ secrets.IMAGE_NAME }}:${{ github.sha }} .
+          docker push ${{ secrets.ACR_INSTANCE }}/${{ secrets.IMAGE_NAME }}:${{ github.sha }}
