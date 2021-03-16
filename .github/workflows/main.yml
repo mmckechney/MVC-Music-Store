@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
   
 env:
-  dockerfilePath: 'MvcMusicStore-Completed/MvcMusicStore/Dockefile'
+  dockerfilePath: 'MVC-Music-Store/MvcMusicStore-Completed/MvcMusicStore/Dockefile'
   tag: '${{ github.run_id  }}'
   USER: ${{ secrets.ACR_USER }}
   TOKEN: ${{ secrets.ACR_SECRET }}
