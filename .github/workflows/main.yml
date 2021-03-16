@@ -16,8 +16,11 @@ on:
     
 env:
   imageRepository: 'mvmusicstoreweb'
-  dockerfilePath: './MvcMusicStore-Completed/MvcMusicStore'
+  dockerfilePath: './MvcMusicStore-Completed/MvcMusicStore/Dockefile'
   tag: '${{ github.run_id  }}'
+  USER: ${{ secrets.ACR_USER }}
+  TOKEN: ${{ secrets.ACR_SECRET }}
+  REPOSITORY: ${{ secrets.ACR_TENANT }}
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -32,12 +35,11 @@ jobs:
       - uses: actions/checkout@v2
     
       - name: Build and push an image to container registry
-        uses: docker/build-push-action@v1
-        with:
-          username: ${{ secrets.ACR_USERNAME }}
-          password: ${{ secrets.ACR_PASSWORD }}
-	        registry: ${{ secrets.ACR_INSTANCE }}
-          path: ${{ env.dockerfilePath }}
-          dockerfile: '${{ env.dockerfilePath }}/Dockerfile'
-          repository: ${{ env.imageRepository }}
-          tags: ${{ env.tag }},latest
+	working-directory: .
+	run: |
+          docker login $env:REPOSITORY -u $env:USER -p $env:TOKEN
+          docker build --file=$env:dockerfilePath -t ${{ secrets.ACR_TENANT }}/${{ secrets.IMAGE_NAME }}:$env:tag .
+          docker image push ${{ secrets.ACR_TENANT }}/${{ secrets.IMAGE_NAME }}:$env:tag
+          docker logout
+        env:
+
