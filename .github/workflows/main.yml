@@ -12,7 +12,7 @@ env:
   tag: '${{ github.run_id  }}'
   USER: ${{ secrets.ACR_USER }}
   TOKEN: ${{ secrets.ACR_SECRET }}
-  REPOSITORY: ${{ secrets.ACR_TENANT }}
+  REPOSITORY: ${{ secrets.ACR_INSTANCE }}
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -29,6 +29,6 @@ jobs:
       - name: Build and push an image to container registry
         run: |
           docker login $env:REPOSITORY -u $env:USER -p $env:TOKEN
-          docker build --file=$env:dockerfilePath -t ${{ secrets.ACR_TENANT }}/${{ secrets.IMAGE_NAME }}:$env:tag .
-          docker image push ${{ secrets.ACR_TENANT }}/${{ secrets.IMAGE_NAME }}:$env:tag
+          docker build --file=$env:dockerfilePath -t ${{ secrets.ACR_INSTANCE }}/${{ secrets.IMAGE_NAME }}:$env:tag .
+          docker image push ${{ secrets.ACR_ACR_INSTANCE }}/${{ secrets.IMAGE_NAME }}:$env:tag
           docker logout
