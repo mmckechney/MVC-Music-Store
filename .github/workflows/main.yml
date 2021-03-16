@@ -41,5 +41,3 @@ jobs:
           docker build --file=$env:dockerfilePath -t ${{ secrets.ACR_TENANT }}/${{ secrets.IMAGE_NAME }}:$env:tag .
           docker image push ${{ secrets.ACR_TENANT }}/${{ secrets.IMAGE_NAME }}:$env:tag
           docker logout
-        env:
-
