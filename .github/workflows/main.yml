@@ -27,7 +27,7 @@ jobs:
     
       - name: Build and push an image to container registry
         run: |
-          echo $github.wokspace
+          echo ${{ github.workspace  }}
           docker login $env:REPOSITORY -u $env:USER -p $env:TOKEN
           docker build --file=$env:dockerfilePath -t ${{ secrets.ACR_INSTANCE }}/${{ secrets.IMAGE_NAME }}:${{ github.run_id  }} .
           docker image push ${{ secrets.ACR_ACR_INSTANCE }}/${{ secrets.IMAGE_NAME }}:${{ github.run_id  }}
