@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
   
 env:
-  dockerfilePath: 'MvcMusicStore-Completed\CIDockefile'
+  dockerfilePath: 'D:\a\MVC-Music-Store\MVC-Music-Store\MvcMusicStore-Completed'
   USER: ${{ secrets.ACR_USER }}
   TOKEN: ${{ secrets.ACR_SECRET }}
   REPOSITORY: ${{ secrets.ACR_INSTANCE }}
@@ -27,8 +27,6 @@ jobs:
     
       - name: Build and push an image to container registry
         run: |
-          Get-ChildItem -Recurse
-          more ${{ github.workspace }}\$env:dockerfilePath
           docker login $env:REPOSITORY -u $env:USER -p $env:TOKEN
           docker build --file=$env:dockerfilePath -t ${{ secrets.ACR_INSTANCE }}/${{ secrets.IMAGE_NAME }}:${{ github.run_id  }} .
           docker image push ${{ secrets.ACR_ACR_INSTANCE }}/${{ secrets.IMAGE_NAME }}:${{ github.run_id  }}
