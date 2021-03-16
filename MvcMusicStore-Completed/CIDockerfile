@@ -2,14 +2,14 @@ FROM mcr.microsoft.com/dotnet/framework/sdk:4.8 AS build
 WORKDIR /app
 
 # copy csproj and restore as distinct layers
-COPY *.sln .
-COPY MvcMusicStore/*.csproj ./MvcMusicStore/
-COPY MvcMusicStore/*.config ./MvcMusicStore/
+COPY MvcMusicStore-Completed/*.sln .
+COPY MvcMusicStore-Completed/MvcMusicStore/*.csproj ./MvcMusicStore/
+COPY MvcMusicStore-Completed/MvcMusicStore/*.config ./MvcMusicStore/
 RUN nuget restore
 
 # copy everything else and build app
-COPY MvcMusicStore/. ./MvcMusicStore/
-WORKDIR /app/aspnetmvcapp
+COPY MvcMusicStore-Completed/MvcMusicStore/. ./MvcMusicStore/
+WORKDIR /app/MvcMusicStore
 RUN msbuild /p:Configuration=Release -r:False
 
 
