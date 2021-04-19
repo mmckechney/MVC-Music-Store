@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: swdemo123.azurecr.io
+  repository: swdemo123.azurecr.io/mvcmusicstoreweb
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""

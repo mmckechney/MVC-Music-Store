@@ -1,6 +1,6 @@
 apiVersion: v2
 name: mvcmusicstoreweb
-description: A Helm chart for Kubernetes
+description: MVC Music Store web application
 
 # A chart can be either an 'application' or a 'library' chart.
 #
