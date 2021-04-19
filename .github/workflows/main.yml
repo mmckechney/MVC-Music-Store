@@ -77,10 +77,10 @@ jobs:
 
     - name: Helm Upgrade
       run: |
-        helm registry login ${{ secrets.ACR_INSTANCE }} --username ${{ secrets.ACR_USERNAME }} --password ${{ secrets.ACR_PASSWORD }}
+        helm registry login ${{ secrets.ACR_INSTANCE }} --username ${{ secrets.ACR_USER }} --password ${{ secrets.ACR_SECRET }}
         helm chart pull ${{ secrets.ACR_INSTANCE }}/helm/${{ secrets.IMAGE_NAME }}:v${{ github.run_id }}
-        helm chart export ${{ secrets.ACR_INSTANCE }}/helm/${{ secrets.IMAGE_NAME }}:v${{ github.run_id }}
-        helm upgrade ${{ secrets.IMAGE_NAME }}
+        helm chart export ${{ secrets.ACR_INSTANCE }}/helm/${{ secrets.IMAGE_NAME }}:v${{ github.run_id }} --destination .\upgrade
+        helm upgrade ${{ secrets.IMAGE_NAME }} .\upgrade\${{ secrets.IMAGE_NAME }}
       env:
         KUBECONFIG: '.\kubeconfig'
         HELM_EXPERIMENTAL_OCI: 1
