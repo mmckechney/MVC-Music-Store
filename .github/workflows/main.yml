@@ -77,6 +77,7 @@ jobs:
 
     - name: Helm Upgrade
       run: |
+        mkdir upgrade
         helm registry login ${{ secrets.ACR_INSTANCE }} --username ${{ secrets.ACR_USER }} --password ${{ secrets.ACR_SECRET }}
         helm chart pull ${{ secrets.ACR_INSTANCE }}/helm/${{ secrets.IMAGE_NAME }}:v${{ github.run_id }}
         helm chart export ${{ secrets.ACR_INSTANCE }}/helm/${{ secrets.IMAGE_NAME }}:v${{ github.run_id }} --destination .\upgrade
