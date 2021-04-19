@@ -16,7 +16,7 @@ env:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build-and-deploy-to-azure:
+  build-and-publish-docker-image:
     # The type of runner that the job will run on
     runs-on: windows-latest
 
@@ -31,3 +31,33 @@ jobs:
           docker build --file=$env:dockerfilePath -t ${{ secrets.ACR_INSTANCE }}/${{ secrets.IMAGE_NAME }}:${{ github.run_id }} .
           docker image push ${{ secrets.ACR_INSTANCE }}/${{ secrets.IMAGE_NAME }}:${{ github.run_id }}
           docker logout
+  build-and-push-helm-chart:
+    name: Build and Push Helm Chart
+    runs-on: windows-latest
+    needs: [build-and-publish-docker-image]
+    steps:
+    # Checkout the repo
+    - uses: actions/checkout@master
+
+    - name: Helm Repo Add
+      run: |
+        helm repo add ${{ secrets.ACR_INSTANCE }} https://${{ secrets.ACR_INSTANCE }}/helm/v1/repo --username ${{ secrets.ACR_USER }} --password ${{ secrets.ACR_SECRET }}
+      env:
+        HELM_EXPERIMENTAL_OCI: 1
+
+    - name: Helm Chart Save
+      run: |
+        cd .\charts\mvcmusicstoreweb
+        helm chart save . ${{ secrets.IMAGE_NAME }}:v${{ github.run_id }}
+        helm chart save . ${{ secrets.ACR_INSTANCE }}/helm/${{ secrets.IMAGE_NAME }}:v${{ github.run_id }}
+        # list out saved charts
+        helm chart list
+      env:
+        HELM_EXPERIMENTAL_OCI: 1
+
+    - name: Helm Chart Push
+      run: |
+        helm registry login ${{ secrets.ACR_INSTANCE }} --username ${{ secrets.ACR_USER }} --password ${{ secrets.ACR_SECRET }}
+        helm chart push${{ secrets.ACR_INSTANCE }}/helm/${{ secrets.IMAGE_NAME }}:v${{ github.run_id }}
+      env:
+        HELM_EXPERIMENTAL_OCI: 1
