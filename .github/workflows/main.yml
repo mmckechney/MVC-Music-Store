@@ -2,9 +2,9 @@ name: Build Windows Container Image
 
 on:
   push:
-    branches: [ post-containerisation ]
+    branches: [ deploy-to-k8s ]
   pull_request:
-    branches: [ post-containerisation ]
+    branches: [ deploy-to-k8s ]
   workflow_dispatch:
   
 env:
