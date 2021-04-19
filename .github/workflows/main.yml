@@ -17,12 +17,9 @@ env:
 jobs:
   # This workflow contains a single job called "build"
   build-and-publish-docker-image:
-    # The type of runner that the job will run on
+    name: Build and Publish Docker Image
     runs-on: windows-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
     
       - name: Build and push an image to container registry
@@ -36,7 +33,6 @@ jobs:
     runs-on: windows-latest
     needs: [build-and-publish-docker-image]
     steps:
-    # Checkout the repo
     - uses: actions/checkout@master
 
     - name: Helm Repo Add
@@ -60,4 +56,31 @@ jobs:
         helm registry login ${{ secrets.ACR_INSTANCE }} --username ${{ secrets.ACR_USER }} --password ${{ secrets.ACR_SECRET }}
         helm chart push${{ secrets.ACR_INSTANCE }}/helm/${{ secrets.IMAGE_NAME }}:v${{ github.run_id }}
       env:
+        HELM_EXPERIMENTAL_OCI: 1
+        
+  aks-deployment:
+    name: AKS Deployment
+    runs-on: windows-latest
+    needs: [build-and-publish-docker-image,build-and-push-helm-chart]
+    steps:
+    - uses: actions/checkout@master
+
+    - name: kubeconfig
+      run: echo "${{ secrets.KUBECONFIG }}" >> kubeconfig
+
+    - name: Helm Repo Add
+      run: |
+        helm repo add ${{ secrets.ACR_INSTANCE }} https://${{ secrets.ACR_INSTANCE }}/helm/v1/repo --username ${{ secrets.ACR_USER }} --password ${{ secrets.ACR_SECRET }}
+        helm repo update
+      env:
+        HELM_EXPERIMENTAL_OCI: 1
+
+    - name: Helm Upgrade
+      run: |
+        helm registry login ${{ secrets.ACR_INSTANCE }} --username ${{ secrets.ACR_USER }} --password ${{ secrets.ACR_SECRET }}
+        helm chart pull ${{ secrets.ACR_INSTANCE }}/helm/${{ secrets.IMAGE_NAME }}:v${{ github.run_id }}
+        helm chart export ${{ secrets.ACR_INSTANCE }}/helm/${{ secrets.IMAGE_NAME }}:v${{ github.run_id }} --destination .\upgrade
+        helm upgrade ${{ secrets.IMAGE_NAME }} .\upgrade\${{ secrets.IMAGE_NAME }}
+      env:
+        KUBECONFIG: '.\kubeconfig'
         HELM_EXPERIMENTAL_OCI: 1
