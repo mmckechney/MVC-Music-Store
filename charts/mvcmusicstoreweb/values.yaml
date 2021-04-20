@@ -12,7 +12,7 @@ image:
 
 imagePullSecrets: []
 nameOverride: "mvcmusicstore"
-fullnameOverride: "https://github.com/helm/helm/releases"
+fullnameOverride: "mvcmusicstore"
 
 serviceAccount:
   # Specifies whether a service account should be created
