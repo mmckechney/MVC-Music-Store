@@ -25,8 +25,8 @@ jobs:
       - name: Build and push an image to container registry
         run: |
           docker login $env:REPOSITORY -u $env:USER -p $env:TOKEN
-          docker build --file=$env:dockerfilePath -t ${{ secrets.ACR_INSTANCE }}/${{ secrets.IMAGE_NAME }}:${{ github.run_id }} .
-          docker image push ${{ secrets.ACR_INSTANCE }}/${{ secrets.IMAGE_NAME }}:${{ github.run_id }}
+          docker build --file=$env:dockerfilePath -t ${{ secrets.ACR_INSTANCE }}/${{ secrets.IMAGE_NAME }}:${{ github.run_id }} -t ${{ secrets.ACR_INSTANCE }}/${{ secrets.IMAGE_NAME }}:latest .
+          docker image push --all-tags ${{ secrets.ACR_INSTANCE }}/${{ secrets.IMAGE_NAME }}
           docker logout
   build-and-push-helm-chart:
     name: Build and Push Helm Chart
