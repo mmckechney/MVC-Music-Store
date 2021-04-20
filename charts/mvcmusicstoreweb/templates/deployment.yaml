@@ -37,8 +37,8 @@ spec:
             - name: MusicStoreEntities
               valueFrom:
                 secretKeyRef:
-                  key: dbconnection
-                  name: connstring
+                  key: connstring
+                  name: dbconnection
           ports:
             - name: http
               containerPort: 80
