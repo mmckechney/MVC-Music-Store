@@ -1,0 +1,44 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: musicstore
+  labels:
+    app: musicstore
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: musicstore
+  template:
+    metadata:
+      labels:
+        app: musicstore
+    spec:
+      containers:
+        - name: musicstore
+          image: musicstoremwm.azurecr.io/mvcmusicstore:latest
+          ports:
+            - containerPort: 80
+              name: http
+              protocol: TCP
+      nodeSelector:
+        kubernetes.io/os: windows
+      tolerations:
+      - effect: NoExecute
+        key: OS
+        operator: Equal
+        value: Windows
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: musicstore-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: musicstore
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
